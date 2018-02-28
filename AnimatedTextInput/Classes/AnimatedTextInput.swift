@@ -169,7 +169,7 @@ open class AnimatedTextInput: UIControl {
     }
 
     fileprivate let lineView = AnimatedLine()
-    fileprivate let placeholderLayer = CATextLayer()
+    fileprivate let placeholderLayer = AccessibleTextLayer()
     fileprivate let counterLabel = UILabel()
     fileprivate let counterLabelRightMargin: CGFloat = 15
     fileprivate let counterLabelTopMargin: CGFloat = 5
@@ -609,5 +609,55 @@ fileprivate extension Dictionary {
         for (key, value) in dict { self[key] = value }
         return self
     }
+}
+
+private class AccessibleTextLayer: CATextLayer {
+    var accessibilityElement: UIAccessibilityElement?
+}
+
+extension AnimatedTextInput {
+
+	open override func accessibilityElementCount() -> Int {
+		guard let sublayersCount = self.layer.sublayers?.count else {
+			return 0
+		}
+
+		return sublayersCount
+	}
+
+	open override func accessibilityElement(at index: Int) -> Any? {
+		guard let textLayer = self.layer.sublayers?[index] as? AccessibleTextLayer else {
+			return nil
+		}
+
+		var accessibilityElement = textLayer.accessibilityElement
+		if (accessibilityElement == nil) {
+			accessibilityElement = UIAccessibilityElement(accessibilityContainer: self)
+			accessibilityElement?.accessibilityFrame = convert(textLayer.frame, to: UIApplication.shared.keyWindow)
+			accessibilityElement?.accessibilityTraits = UIAccessibilityTraitStaticText
+			accessibilityElement?.accessibilityIdentifier = "placeHolder"
+			textLayer.accessibilityElement = accessibilityElement
+		}
+
+		return accessibilityElement
+	}
+
+	open override func index(ofAccessibilityElement element: Any) -> Int {
+
+		guard let _element = element as? UIAccessibilityElement else {
+			return NSNotFound
+		}
+
+		let elementsCount = self.accessibilityElementCount()
+		for index in 0..<elementsCount {
+			if let accessibilityElement = accessibilityElement(at: index) as? UIAccessibilityElement {
+				if (_element == accessibilityElement) {
+					return index
+				}
+			}
+		}
+
+		return NSNotFound
+	}
 }
 
