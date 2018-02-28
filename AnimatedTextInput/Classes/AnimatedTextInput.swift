@@ -286,6 +286,7 @@ open class AnimatedTextInput: UIControl {
     }
 
     fileprivate func addTextInput() {
+		isAccessibilityElement = true
         textInput = AnimatedTextInputFieldConfigurator.configure(with: type)
         textInput.textInputDelegate = self
         textInput.view.tintColor = style.activeColor
