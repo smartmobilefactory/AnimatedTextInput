@@ -39,6 +39,8 @@ open class AnimatedTextInput: UIControl {
     open var placeHolderText = "Test" {
         didSet {
             placeholderLayer.string = placeHolderText
+			placeholderLayer.accessibilityElement?.accessibilityLabel = placeHolderText
+			textInput.view.accessibilityLabel = placeHolderText
         }
     }
 
@@ -276,7 +278,20 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.font = style.textInputFont
         placeholderLayer.contentsScale = UIScreen.main.scale
         placeholderLayer.backgroundColor = UIColor.clear.cgColor
-        layoutPlaceholderLayer()
+		var accessibilityElement = placeholderLayer.accessibilityElement
+		if (accessibilityElement == nil) {
+			accessibilityElement = UIAccessibilityElement(accessibilityContainer: self)
+			accessibilityElement?.accessibilityFrame = convert(placeholderLayer.frame, to: UIApplication.shared.keyWindow)
+			accessibilityElement?.accessibilityTraits = UIAccessibilityTraitStaticText
+			accessibilityElement?.accessibilityIdentifier = "placeHolder"
+			accessibilityElement?.accessibilityLabel = placeHolderText
+			placeholderLayer.accessibilityElement = accessibilityElement
+		}
+		if (accessibilityElements == nil) {
+			accessibilityElements = [Any]()
+		}
+		accessibilityElements?.append(placeholderLayer.accessibilityElement)
+		layoutPlaceholderLayer()
         layer.addSublayer(placeholderLayer)
     }
 
@@ -286,13 +301,17 @@ open class AnimatedTextInput: UIControl {
     }
 
     fileprivate func addTextInput() {
-		isAccessibilityElement = true
         textInput = AnimatedTextInputFieldConfigurator.configure(with: type)
         textInput.textInputDelegate = self
         textInput.view.tintColor = style.activeColor
         textInput.textColor = style.textInputFontColor
         textInput.font = style.textInputFont
         textInput.view.translatesAutoresizingMaskIntoConstraints = false
+		if (accessibilityElements == nil) {
+			accessibilityElements = [Any]()
+		}
+		textInput.view.accessibilityIdentifier = "textInput"
+		accessibilityElements?.append(textInput.view)
         addSubview(textInput.view)
         invalidateIntrinsicContentSize()
     }
@@ -619,40 +638,29 @@ private class AccessibleTextLayer: CATextLayer {
 extension AnimatedTextInput {
 
 	open override func accessibilityElementCount() -> Int {
-		guard let sublayersCount = self.layer.sublayers?.count else {
+		guard  let elements = accessibilityElements else {
 			return 0
 		}
 
-		return sublayersCount
+		return elements.count
 	}
 
 	open override func accessibilityElement(at index: Int) -> Any? {
-		guard let textLayer = self.layer.sublayers?[index] as? AccessibleTextLayer else {
+		guard let elements = accessibilityElements else {
 			return nil
 		}
 
-		var accessibilityElement = textLayer.accessibilityElement
-		if (accessibilityElement == nil) {
-			accessibilityElement = UIAccessibilityElement(accessibilityContainer: self)
-			accessibilityElement?.accessibilityFrame = convert(textLayer.frame, to: UIApplication.shared.keyWindow)
-			accessibilityElement?.accessibilityTraits = UIAccessibilityTraitStaticText
-			accessibilityElement?.accessibilityIdentifier = "placeHolder"
-			textLayer.accessibilityElement = accessibilityElement
-		}
-
-		return accessibilityElement
+		return elements[index]
 	}
 
 	open override func index(ofAccessibilityElement element: Any) -> Int {
-
-		guard let _element = element as? UIAccessibilityElement else {
+		guard let accessElement = element as? UIAccessibilityElement else {
 			return NSNotFound
 		}
 
-		let elementsCount = self.accessibilityElementCount()
-		for index in 0..<elementsCount {
-			if let accessibilityElement = accessibilityElement(at: index) as? UIAccessibilityElement {
-				if (_element == accessibilityElement) {
+		for index in 0..<accessibilityElementCount() {
+			if let _element = accessibilityElement(at: index) as? UIAccessibilityElement {
+				if (accessElement == _element) {
 					return index
 				}
 			}
