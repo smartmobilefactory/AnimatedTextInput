@@ -290,7 +290,7 @@ open class AnimatedTextInput: UIControl {
 		if (accessibilityElements == nil) {
 			accessibilityElements = [Any]()
 		}
-		accessibilityElements?.append(placeholderLayer.accessibilityElement)
+		accessibilityElements?.append(placeholderLayer.accessibilityElement as Any)
 		layoutPlaceholderLayer()
         layer.addSublayer(placeholderLayer)
     }
@@ -361,6 +361,7 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.fontSize = fontSize
         placeholderLayer.foregroundColor = foregroundColor
         placeholderLayer.string = text
+		placeholderLayer.accessibilityElement?.accessibilityLabel = text
         layoutPlaceholderLayer()
     }
 
