@@ -282,7 +282,6 @@ open class AnimatedTextInput: UIControl {
 			accessibilityElement = UIAccessibilityElement(accessibilityContainer: self)
 			accessibilityElement?.accessibilityFrame = convert(placeholderLayer.frame, to: UIApplication.shared.keyWindow)
 			accessibilityElement?.accessibilityTraits = UIAccessibilityTraitStaticText
-			accessibilityElement?.accessibilityIdentifier = "placeHolder"
 			accessibilityElement?.accessibilityLabel = placeHolderText
 			placeholderLayer.accessibilityElement = accessibilityElement
 		}
@@ -309,7 +308,6 @@ open class AnimatedTextInput: UIControl {
 		if (accessibilityElements == nil) {
 			accessibilityElements = [Any]()
 		}
-		textInput.view.accessibilityIdentifier = "textInput"
 		accessibilityElements?.append(textInput.view)
         addSubview(textInput.view)
         invalidateIntrinsicContentSize()
