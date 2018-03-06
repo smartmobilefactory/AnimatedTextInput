@@ -399,6 +399,7 @@ open class AnimatedTextInput: UIControl {
         let firstResponder = textInput.view.becomeFirstResponder()
         counterLabel.textColor = style.activeColor
         placeholderErrorText = nil
+		placeholderLayer.accessibilityElement?.accessibilityLabel = placeHolderText
         animatePlaceholder(to: configurePlaceholderAsActiveHint)
         return firstResponder
     }
