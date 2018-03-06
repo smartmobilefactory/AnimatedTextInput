@@ -40,7 +40,6 @@ open class AnimatedTextInput: UIControl {
         didSet {
             placeholderLayer.string = placeHolderText
 			placeholderLayer.accessibilityElement?.accessibilityLabel = placeHolderText
-			textInput.view.accessibilityLabel = placeHolderText
         }
     }
 
@@ -469,7 +468,7 @@ open class AnimatedTextInput: UIControl {
 
     fileprivate func configureType() {
         textInput.view.removeFromSuperview()
-		accessibilityElements?.remove(at: index(ofAccessibilityElement: textInput.view))
+		accessibilityElements =  accessibilityElements?.filter({ $0 as? UIView !== textInput.view})
         addTextInput()
     }
 
@@ -635,41 +634,5 @@ fileprivate extension Dictionary {
 }
 
 private class AccessibleTextLayer: CATextLayer {
-    var accessibilityElement: UIAccessibilityElement?
+	var accessibilityElement: UIAccessibilityElement?
 }
-
-extension AnimatedTextInput {
-
-	open override func accessibilityElementCount() -> Int {
-		guard  let elements = accessibilityElements else {
-			return 0
-		}
-
-		return elements.count
-	}
-
-	open override func accessibilityElement(at index: Int) -> Any? {
-		guard let elements = accessibilityElements else {
-			return nil
-		}
-
-		return elements[index]
-	}
-
-	open override func index(ofAccessibilityElement element: Any) -> Int {
-		guard let accessElement = element as? UIAccessibilityElement else {
-			return NSNotFound
-		}
-
-		for index in 0..<accessibilityElementCount() {
-			if let _element = accessibilityElement(at: index) as? UIAccessibilityElement {
-				if (accessElement == _element) {
-					return index
-				}
-			}
-		}
-
-		return NSNotFound
-	}
-}
-
