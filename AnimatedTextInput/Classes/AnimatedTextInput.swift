@@ -469,6 +469,7 @@ open class AnimatedTextInput: UIControl {
 
     fileprivate func configureType() {
         textInput.view.removeFromSuperview()
+		accessibilityElements?.remove(at: index(ofAccessibilityElement: textInput.view))
         addTextInput()
     }
 
