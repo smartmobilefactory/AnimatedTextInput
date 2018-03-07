@@ -39,6 +39,7 @@ open class AnimatedTextInput: UIControl {
     open var placeHolderText = "Test" {
         didSet {
             placeholderLayer.string = placeHolderText
+			textInput.view.accessibilityLabel = placeHolderText
         }
     }
 
@@ -341,6 +342,7 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.fontSize = fontSize
         placeholderLayer.foregroundColor = foregroundColor
         placeholderLayer.string = text
+		textInput.view.accessibilityLabel = text
         layoutPlaceholderLayer()
     }
 
@@ -378,6 +380,7 @@ open class AnimatedTextInput: UIControl {
         let firstResponder = textInput.view.becomeFirstResponder()
         counterLabel.textColor = style.activeColor
         placeholderErrorText = nil
+		textInput.view.accessibilityLabel = placeHolderText
         animatePlaceholder(to: configurePlaceholderAsActiveHint)
         return firstResponder
     }
@@ -427,6 +430,7 @@ open class AnimatedTextInput: UIControl {
 
     open func show(error errorMessage: String, placeholderText: String? = nil) {
         placeholderErrorText = errorMessage
+		textInput.view.accessibilityLabel = errorMessage
         if let textInput = textInput as? TextInputError {
             textInput.configureErrorState(with: placeholderText)
         }
@@ -437,6 +441,7 @@ open class AnimatedTextInput: UIControl {
         placeholderErrorText = nil
         if let textInputError = textInput as? TextInputError {
             textInputError.removeErrorHintMessage()
+			textInput.view.accessibilityLabel = placeHolderText
         }
         if isActive {
             animatePlaceholder(to: configurePlaceholderAsActiveHint)
