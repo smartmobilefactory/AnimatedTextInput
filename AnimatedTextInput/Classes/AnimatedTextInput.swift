@@ -432,6 +432,7 @@ open class AnimatedTextInput: UIControl {
         placeholderErrorText = errorMessage
         if let textInput = textInput as? TextInputError {
             textInput.configureErrorState(with: placeholderText)
+			accessibilityLabel = placeholderText
         }
         animatePlaceholder(to: configurePlaceholderAsErrorHint)
     }
@@ -440,6 +441,7 @@ open class AnimatedTextInput: UIControl {
         placeholderErrorText = nil
         if let textInputError = textInput as? TextInputError {
             textInputError.removeErrorHintMessage()
+			accessibilityLabel = placeHolderText
         }
         if isActive {
             animatePlaceholder(to: configurePlaceholderAsActiveHint)
