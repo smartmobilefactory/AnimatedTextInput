@@ -39,7 +39,7 @@ open class AnimatedTextInput: UIControl {
     open var placeHolderText = "Test" {
         didSet {
             placeholderLayer.string = placeHolderText
-			placeholderLayer.accessibilityElement?.accessibilityLabel = placeHolderText
+			accessibilityLabel = placeHolderText
         }
     }
 
@@ -170,7 +170,7 @@ open class AnimatedTextInput: UIControl {
     }
 
     fileprivate let lineView = AnimatedLine()
-    fileprivate let placeholderLayer = AccessibleTextLayer()
+    fileprivate let placeholderLayer = CATextLayer()
     fileprivate let counterLabel = UILabel()
     fileprivate let counterLabelRightMargin: CGFloat = 15
     fileprivate let counterLabelTopMargin: CGFloat = 5
@@ -277,18 +277,6 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.font = style.textInputFont
         placeholderLayer.contentsScale = UIScreen.main.scale
         placeholderLayer.backgroundColor = UIColor.clear.cgColor
-		var accessibilityElement = placeholderLayer.accessibilityElement
-		if (accessibilityElement == nil) {
-			accessibilityElement = UIAccessibilityElement(accessibilityContainer: self)
-			accessibilityElement?.accessibilityFrame = convert(placeholderLayer.frame, to: UIApplication.shared.keyWindow)
-			accessibilityElement?.accessibilityTraits = UIAccessibilityTraitStaticText
-			accessibilityElement?.accessibilityLabel = placeHolderText
-			placeholderLayer.accessibilityElement = accessibilityElement
-		}
-		if (accessibilityElements == nil) {
-			accessibilityElements = [Any]()
-		}
-		accessibilityElements?.append(placeholderLayer.accessibilityElement as Any)
 		layoutPlaceholderLayer()
         layer.addSublayer(placeholderLayer)
     }
@@ -305,10 +293,6 @@ open class AnimatedTextInput: UIControl {
         textInput.textColor = style.textInputFontColor
         textInput.font = style.textInputFont
         textInput.view.translatesAutoresizingMaskIntoConstraints = false
-		if (accessibilityElements == nil) {
-			accessibilityElements = [Any]()
-		}
-		accessibilityElements?.append(textInput.view)
         addSubview(textInput.view)
         invalidateIntrinsicContentSize()
     }
@@ -358,7 +342,7 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.fontSize = fontSize
         placeholderLayer.foregroundColor = foregroundColor
         placeholderLayer.string = text
-		placeholderLayer.accessibilityElement?.accessibilityLabel = text
+		accessibilityLabel = text
         layoutPlaceholderLayer()
     }
 
@@ -396,7 +380,7 @@ open class AnimatedTextInput: UIControl {
         let firstResponder = textInput.view.becomeFirstResponder()
         counterLabel.textColor = style.activeColor
         placeholderErrorText = nil
-		placeholderLayer.accessibilityElement?.accessibilityLabel = placeHolderText
+		accessibilityLabel = placeHolderText
         animatePlaceholder(to: configurePlaceholderAsActiveHint)
         return firstResponder
     }
@@ -629,8 +613,4 @@ fileprivate extension Dictionary {
         for (key, value) in dict { self[key] = value }
         return self
     }
-}
-
-private class AccessibleTextLayer: CATextLayer {
-	var accessibilityElement: UIAccessibilityElement?
 }
