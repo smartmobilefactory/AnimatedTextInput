@@ -277,7 +277,7 @@ open class AnimatedTextInput: UIControl {
         placeholderLayer.font = style.textInputFont
         placeholderLayer.contentsScale = UIScreen.main.scale
         placeholderLayer.backgroundColor = UIColor.clear.cgColor
-		layoutPlaceholderLayer()
+        layoutPlaceholderLayer()
         layer.addSublayer(placeholderLayer)
     }
 
